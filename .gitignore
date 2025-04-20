@@ -1,0 +1,15 @@
+terraform/.terraform
+terraform/.terraformrc
+terraform/**/.terraform/*
+terraform/.terraform.d
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.vscode
+terraform/.idea
+terraform/.idea
+terraform/terraform.rc
+terraform/terraform.tfvars
+terraform/terraform.tfvars.json
+terraform/*.auto.tfvars
+terraform/*.tfvars
+terraform/*.auto.tfvars.json
