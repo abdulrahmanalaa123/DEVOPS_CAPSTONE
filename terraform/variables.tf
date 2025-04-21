@@ -1,6 +1,6 @@
 variable "aws_region" {
 	type = string
-	default = "eu-central-1"
+	default = "us-east-1"
 }
 variable "cred_profile"{
 	type = string
@@ -8,3 +8,8 @@ variable "cred_profile"{
 }
 
 
+variable "vpc_cider" {
+    description = "The CIDER block for the VPC"
+    type = string
+  
+}
