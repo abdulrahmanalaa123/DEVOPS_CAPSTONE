@@ -12,8 +12,3 @@ provider "aws" {
   profile = var.cred_profile
 }
 
-module "network" {
-  source = "./modules/network"
-  vpc_cider = var.vpc_cider
-
-}
