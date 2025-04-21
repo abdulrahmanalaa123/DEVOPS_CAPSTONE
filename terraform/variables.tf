@@ -6,3 +6,5 @@ variable "cred_profile"{
 	type = string
 	default = "default"
 }
+
+
