@@ -7,8 +7,11 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region 
-  shared_credentials_files = ["$HOME/.aws/credentials"]
+  region = var.aws_region
   profile = var.cred_profile
 }
 
+module "network" {
+  source = "./modules/network"
+  vpc_cidr = var.vpc_cidr
+}
