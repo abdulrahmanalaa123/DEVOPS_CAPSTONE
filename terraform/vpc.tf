@@ -5,7 +5,11 @@ data "aws_availability_zones" "azs" {
 
 module "myapp-vpc" {
   source  = "terraform-aws-modules/vpc/aws"
+<<<<<<< HEAD
   version = "5.19.0"
+=======
+  version = "5.1.2"
+>>>>>>> 10f5d50 (git branch -a)
 
   name = "myapp-vpc"
   cidr = var.vpc_cidr_block
