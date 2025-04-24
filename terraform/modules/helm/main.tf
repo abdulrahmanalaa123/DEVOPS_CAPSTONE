@@ -8,5 +8,6 @@ resource "helm_release" "argocd" {
   create_namespace = true
   version          = "3.35.4"
 
-#   values = [file("values/argocd.yaml")]
+  values = [file("../argo-cd/values.yaml")]
+  depends_on = [var.cluster_name]
 }

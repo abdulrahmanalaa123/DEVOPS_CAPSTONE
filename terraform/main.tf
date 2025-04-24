@@ -23,6 +23,7 @@ provider "helm" {
   }
   
 }
+
 module "network" {
   source = "./modules/network"
   vpc_cidr = var.vpc_cidr
@@ -35,4 +36,18 @@ module "eks" {
 }
 module "helm" {
   source = "./modules/helm"
+  cluster_name = module.eks.cluster_name
+}
+
+resource "null_resource" "apply_argocd_root_application" {
+  depends_on = [
+    module.helm.argocd
+  ]
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.aws_region}
+      kubectl apply -f ../argo-cd/argocd.yaml
+    EOT
+  }
 }

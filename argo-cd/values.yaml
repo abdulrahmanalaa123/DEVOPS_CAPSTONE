@@ -1,0 +1,54 @@
+# argocd-values.yaml
+server:
+  extraArgs:
+  - --insecure
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "alb"
+      alb.ingress.kubernetes.io/scheme: "internet-facing"
+      alb.ingress.kubernetes.io/target-type: "ip"
+      alb.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-policy: "ELBSecurityPolicy-TLS-1-2-2017-01"
+    hosts:
+    - argocd.your-public-domain.com
+    paths:
+    - /
+    pathType: Prefix
+    tls:
+    - secretName: argocd-server-tls
+      hosts:
+      - argocd.your-public-domain.com
+
+  service:
+    type: LoadBalancer
+
+rbac:
+
+redis:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+controller:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: ""
+
+repoServer:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: ""
+applicationSet:
+  enabled: true
+
+notifications:
+  enabled: true
+
+ha:
+  enabled: false
