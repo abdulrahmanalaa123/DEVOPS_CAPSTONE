@@ -10,3 +10,12 @@ variable "sg_array" {
     type = list(any)
     default = [ ]
 }
+
+variable "cluster_role_name" {
+  type = string
+  default = "none"
+}
+variable "worker_role_name" {
+  type = string
+  default = "none"
+}
