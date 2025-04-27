@@ -1,0 +1,4 @@
+1-connect the kubectl with the cluster
+aws eks update-kubeconfig --region region-code --name my-cluster
+
+2-
