@@ -12,25 +12,18 @@ resource "helm_release" "argocd" {
   depends_on = [var.cluster_name]
 }
 
-resource "helm_release" "mysql" {
-  name       = "my-mysql"
-  namespace  = "default"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "mysql"
-
+resource "helm_release" "jenkins" {
+  name       = "jenkins"
+  repository = "https://charts.jenkins.io"
+  chart      = "jenkins"
+  namespace  = "jenkins"
+  create_namespace = true
+  version    = "5.8.37"  # You can adjust the version depending on your needs
+  wait             = true
   values = [
-    file("helm/mysql-values.yaml")
+    file("modules/helm/jenkins-values.yaml")
+
   ]
 }
 
-resource "helm_release" "redis" {
-  name       = "my-redis"
-  namespace  = "default"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "redis"
-
-  values = [
-    file("helm/redis-values.yaml")
-  ]
-}
 
