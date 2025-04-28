@@ -17,14 +17,14 @@ resource "aws_iam_policy" "ecr_access" {
             "Action": [
                 "ecr:*",
             ],
-            "Resource" = "arn:aws:ecr:${var.region}:${locals.current_account_id}:repository/*"
+            "Resource" = "arn:aws:ecr:${var.region}:${local.current_account_id}:repository/*"
         },
         {
             "Effect" = "Allow"
             "Action" = [
                 "kms:Decrypt"
             ]
-            "Resource" = "arn:aws:kms:${var.region}:${locals.current_account_id}:key/*"
+            "Resource" = "arn:aws:kms:${var.region}:${local.current_account_id}:key/*"
         }
         ]
     })

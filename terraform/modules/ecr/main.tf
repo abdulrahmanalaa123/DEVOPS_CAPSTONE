@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "image_repo" {
-    name = "application"
+    name = "3AZ_app"
     image_tag_mutability = "IMMUTABLE"
     image_scanning_configuration {
       scan_on_push = true
@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "image_repo" {
     }
 }
 resource "aws_ecr_repository" "jenkins_chart_repo" {
-  name = "application"
+  name = "3AZ_jenkins"
     image_tag_mutability = "IMMUTABLE"
     image_scanning_configuration {
       scan_on_push = true
@@ -21,7 +21,7 @@ resource "aws_ecr_repository" "jenkins_chart_repo" {
     }
 }
 resource "aws_ecr_repository" "argo_chart_repo" {
-  name = "application"
+  name = "3AZ_argo"
     image_tag_mutability = "IMMUTABLE"
     image_scanning_configuration {
       scan_on_push = true
@@ -32,7 +32,7 @@ resource "aws_ecr_repository" "argo_chart_repo" {
     }
 }
 resource "aws_ecr_repository" "image_chart" {
-  name = "application"
+  name = "3AZ_app_chart"
     image_tag_mutability = "IMMUTABLE"
     image_scanning_configuration {
       scan_on_push = true
@@ -42,3 +42,4 @@ resource "aws_ecr_repository" "image_chart" {
       kms_key = aws_kms_key.app_chart.arn
     }
 }
+

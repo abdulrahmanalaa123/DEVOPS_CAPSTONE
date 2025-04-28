@@ -15,7 +15,15 @@ variable "cluster_role_name" {
   type = string
   default = "none"
 }
+variable "cluster_role_arn" {
+  type = string
+  default = "none"
+}
 variable "worker_role_name" {
+  type = string
+  default = "none"
+}
+variable "worker_role_arn" {
   type = string
   default = "none"
 }
