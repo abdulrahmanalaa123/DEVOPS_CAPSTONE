@@ -1,0 +1,31 @@
+# apps/jenkins/values.yaml
+controller:
+  serviceType: ClusterIP
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+  
+  # Persistence for Jenkins data
+  persistence:
+    enabled: true
+    size: "10Gi"
+    
+  # Add any plugins you want pre-installed
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+
+  # Jenkins Configuration as Code
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      jenkins-casc-configs: |
+        jenkins:
+          systemMessage: "Jenkins managed by ArgoCD"
+          
