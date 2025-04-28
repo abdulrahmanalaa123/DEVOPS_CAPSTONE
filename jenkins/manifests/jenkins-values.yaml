@@ -5,7 +5,7 @@ controller:
   servicePort: 80
   jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
   
-  # Admin Credentials (change in production!)
+  # Admin Credentials
   adminUser: "admin"
   adminPassword: "admin"
 
@@ -35,13 +35,13 @@ controller:
                 namespace: "jenkins-agents"
                 jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
                 podTemplates:
-                  - name: "jnlp-agent"
+                  - name: "jnlp-agent"                                                   # jnlp container for jenkins connection 
                     label: "jenkins-agent"
                     containers:
                       - name: "jnlp"
                         image: "jenkins/inbound-agent:4.11-1-jdk11"
                         args: '${computer.jnlpmac} ${computer.name}'
-                    volumes:
+                    volumes:v                                                            # Docker socket mount for containerized builds
                       - hostPathVolume:
                           hostPath: "/var/run/docker.sock"
                           mountPath: "/var/run/docker.sock"
