@@ -8,7 +8,7 @@ resource "aws_eks_node_group" "private-node" {
     max_size     = 3
     min_size     = 1
   }
-  instance_types = ["t3.small"]
+  instance_types = ["t3.medium"]
   capacity_type  = "ON_DEMAND"
   update_config {
     max_unavailable = 1
