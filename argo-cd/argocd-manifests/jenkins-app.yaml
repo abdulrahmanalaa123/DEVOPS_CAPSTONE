@@ -15,7 +15,7 @@ spec:
     targetRevision: jenkins
     helm:
       valueFiles:
-      - $values/jenkins/manifests/jenkins-values.yaml
+      - jenkins/manifests/jenkins-values.yaml
   project: default
   syncPolicy:
     automated:
