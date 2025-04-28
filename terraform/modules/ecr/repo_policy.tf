@@ -24,7 +24,7 @@ resource "aws_iam_policy" "ecr_access" {
             "Action" = [
                 "kms:Decrypt"
             ]
-            "Resource" = "arn:aws:kms:${var.region}:${data.curr_user.current.acount_id}:key/*"
+            "Resource" = "arn:aws:kms:${var.region}:${locals.current_account_id}:key/*"
         }
         ]
     })
