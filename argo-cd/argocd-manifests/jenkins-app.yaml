@@ -7,21 +7,15 @@ spec:
   destination:
     namespace: jenkins
     server: https://kubernetes.default.svc
-
   source:
-    chart: jenkins
     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     path: jenkins/manifests
     targetRevision: jenkins
-    helm:
-      valueFiles:
-      - jenkins/manifests/jenkins-values.yaml
   project: default
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-      allowEmpty: false
     syncOptions:
     - CreateNamespace=true
     - PruneLast=true
