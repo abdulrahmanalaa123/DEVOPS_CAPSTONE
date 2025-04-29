@@ -13,15 +13,20 @@ metadata:
     type: local
 spec:
   storageClassName: local-storage
-  claimRef:
-    name: jenkins-pv-claim
-    namespace: jenkins
   capacity:
     storage: 10Gi
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   local:
     path: /mnt
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: jenkins-node
+          operator: In
+          values:
+          - "true"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -31,7 +36,7 @@ metadata:
 spec:
   storageClassName: local-storage
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: 3Gi

@@ -9,5 +9,5 @@ resource "helm_release" "argocd" {
   version          = "3.35.4"
 
   values = [file("../argo-cd/values.yaml")]
-  depends_on = [var.cluster_name]
+  depends_on = [var.private_node_group_name]
 }

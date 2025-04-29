@@ -47,6 +47,7 @@ module "ecr" {
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
+  private_node_group_name = module.eks.private_node_group_name
 }
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [

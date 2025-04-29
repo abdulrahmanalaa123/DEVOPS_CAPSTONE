@@ -15,3 +15,7 @@ output "cluster_role" {
 output "worker_role" {
   value = aws_iam_role.node_group_role
 }
+
+output "private_node_group_name" {
+  value = aws_eks_node_group.private-node.node_group_name
+}
