@@ -1,20 +1,23 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: jenkins
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE.git'
-    targetRevision: add_ingress
-    path: jenkins/manifests
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: jenkins
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: jenkins
+#   namespace: argocd
+# spec:
+#   project: default
+#   source:
+#     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE.git'
+#     targetRevision: add_ingress
+#     path: jenkins/helm/jenkins
+#     helm:
+#       valueFiles:
+#       - values.yaml
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: jenkins
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#     - CreateNamespace=true
