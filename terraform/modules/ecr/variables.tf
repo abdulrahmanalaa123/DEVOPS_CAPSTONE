@@ -11,6 +11,10 @@ variable "sg_array" {
     default = [ ]
 }
 
+variable "repo_list" {
+  type= list(string)
+  default = [ "az3_app", "az3_app_chart", "az3_jenkins_chart", "az3_argo_chart"]
+}
 variable "cluster_role_name" {
   type = string
   default = "none"

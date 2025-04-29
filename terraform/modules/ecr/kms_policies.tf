@@ -31,20 +31,8 @@ data "aws_iam_policy_document" "key_policies" {
     }
   }
 }
-
-resource "aws_kms_key_policy" "image_key_policy" {
-    key_id = aws_kms_key.app_key.key_id 
-    policy = data.aws_iam_policy_document.key_policies.json
-}
-resource "aws_kms_key_policy" "image_chart_key_policy" {
-    key_id = aws_kms_key.app_chart.key_id 
-    policy = data.aws_iam_policy_document.key_policies.json
-}
-resource "aws_kms_key_policy" "jenkins_chart_key_policy" {
-    key_id = aws_kms_key.jenkins_key.key_id 
-    policy = data.aws_iam_policy_document.key_policies.json
-}
-resource "aws_kms_key_policy" "argo_chart_key_policy" {
-    key_id = aws_kms_key.argo_key.key_id 
+resource "aws_kms_key_policy" "policies" {
+    for_each = aws_kms_key.keys
+    key_id = each.value.key_id 
     policy = data.aws_iam_policy_document.key_policies.json
 }
