@@ -34,11 +34,20 @@ module "eks" {
   private_subnet_ids = module.network.private_subnet_ids
 
 }
+module "ecr" {
+  source = "./modules/ecr"
+  region = var.aws_region
+  cluster_role_name = module.eks.cluster_role.name
+  cluster_role_arn = module.eks.cluster_role.arn
+  worker_role_name =  module.eks.worker_role.name
+  worker_role_arn =  module.eks.worker_role.arn
+  depends_on = [ data.aws_eks_cluster_auth.cluster ]
+}
+
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
 }
-
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [
     module.helm.argocd
