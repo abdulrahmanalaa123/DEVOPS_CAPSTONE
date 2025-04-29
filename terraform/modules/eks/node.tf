@@ -15,7 +15,7 @@ resource "aws_eks_node_group" "private-jenkins" {
   capacity_type  = "ON_DEMAND"
 
   labels = {
-    kubernetes.io/hostname = "jenkins-node"
+    "jenkins-node" = "true"
   }
   update_config {
     max_unavailable = 1
@@ -38,7 +38,7 @@ resource "aws_eks_node_group" "private-node" {
   disk_size      = 20
   capacity_type  = "ON_DEMAND"
   labels = {
-    kubernetes.io/hostname = "Application"
+    "application-node" = "true"
   }
 
   update_config {
