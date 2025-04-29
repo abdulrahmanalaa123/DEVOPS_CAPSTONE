@@ -44,6 +44,39 @@ module "ecr" {
   depends_on = [ data.aws_eks_cluster_auth.cluster ]
 }
 
+# the role's naming convention is named by eks_${service_name}
+# so when creating a service account make sure to add
+#   name: ${service_name}
+#   annotations:
+#    eks.amazonaws.com/role-arn: arn:aws:iam::[AWS account ID]:role/eks_${service_name}
+module "eks_iam" {
+  source = "./modules/eks_iam_role_issuer"
+  oidc_arn = module.eks.oidc_provider.arn
+  oidc_url = module.eks.oidc_provider.url
+  # https://www.awsiamactions.io/generator
+  service_accounts = [
+    {
+     service_name = "jenkins"
+     namespace = "jenkins"
+     required_policy = {
+        Effect = "Allow"
+        Actions = [    
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "kms:Decrypt",
+          "kms:DescribeKey",
+          "kms:Encrypt"
+          ]
+        Resource = "*"
+        } 
+    }
+  ]
+  
+}
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
