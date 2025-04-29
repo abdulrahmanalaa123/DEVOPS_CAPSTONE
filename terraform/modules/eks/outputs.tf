@@ -15,3 +15,6 @@ output "cluster_role" {
 output "worker_role" {
   value = aws_iam_role.node_group_role
 }
+output "oidc_provider" {
+  value = aws_iam_openid_connect_provider.eks_oidc
+}
