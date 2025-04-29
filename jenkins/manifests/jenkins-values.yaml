@@ -4,10 +4,11 @@ controller:
   serviceType: LoadBalancer
   servicePort: 80
   jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
-  
+
   # Admin Credentials
-  adminUser: "admin"
-  adminPassword: "admin"
+  admin:
+    username: "admin"
+    password: "admin"
 
   # Persistence
   persistence:
