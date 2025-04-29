@@ -5,7 +5,7 @@ variable "service_accounts" {
       required_policy = object({
         Effect = string
         Actions = list(string)
-        Resource = list(string)
+        Resources = list(string)
       })
     }))
 }
