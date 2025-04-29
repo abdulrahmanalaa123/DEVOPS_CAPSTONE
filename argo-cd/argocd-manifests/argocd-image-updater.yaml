@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-deployment
+  name: argocd-image-updater
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE.git
-    targetRevision: eks_module
+    targetRevision: add_ingress
     path: argocd-image-updater
   destination:
     server: https://kubernetes.default.svc

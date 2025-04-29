@@ -11,4 +11,3 @@ resource "helm_release" "argocd" {
   values = [file("../argo-cd/values.yaml")]
   depends_on = [var.cluster_name]
 }
-

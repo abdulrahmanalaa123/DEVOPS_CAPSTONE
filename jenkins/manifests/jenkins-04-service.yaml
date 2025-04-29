@@ -6,13 +6,13 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: jenkins
+    app: jenkins-server
   ports:
-    - port: 80
-      targetPort: 8080
-      protocol: TCP
-      name: http
-    - port: 50000
-      targetPort: 50000
-      protocol: TCP
-      name: agent
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  - port: 50000
+    targetPort: 50000
+    protocol: TCP
+    name: agent
