@@ -1,17 +1,18 @@
+# jenkins-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: jenkins-service
-  namespace: jenkins
-  annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/path:   /
-      prometheus.io/port:   '8080'
+  name: jenkins
 spec:
+  type: LoadBalancer
   selector:
-    app: jenkins-server
-  type: NodePort
+    app: jenkins
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
-      nodePort: 32000
+      protocol: TCP
+      name: http
+    - port: 50000
+      targetPort: 50000
+      protocol: TCP
+      name: agent
