@@ -9,3 +9,12 @@ output "cluster_endpoint" {
 output "cluster_certificate_authority_data" {
   value = aws_eks_cluster.cluster.certificate_authority[0].data
 }
+output "cluster_role" {
+  value = aws_iam_role.eks_role
+}
+output "worker_role" {
+  value = aws_iam_role.node_group_role
+}
+output "oidc_provider" {
+  value = aws_iam_openid_connect_provider.eks_oidc
+}
