@@ -10,8 +10,6 @@ spec:
     path: jenkins/helm/jenkins
     targetRevision: add_ingress
     helm:
-      valueFiles:
-      - values.yaml
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: jenkins
@@ -19,4 +17,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
-
+    syncOptions:
+    - CreateNamespace=true
