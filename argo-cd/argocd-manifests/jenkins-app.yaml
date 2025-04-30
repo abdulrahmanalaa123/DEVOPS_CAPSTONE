@@ -9,6 +9,9 @@ spec:
     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     path: jenkins/helm/jenkins
     targetRevision: add_ingress
+    helm:
+      valueFiles:
+      - values.yaml # Ensure this file exists in the specified path
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: jenkins
