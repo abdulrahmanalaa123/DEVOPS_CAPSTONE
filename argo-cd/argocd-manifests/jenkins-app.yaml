@@ -6,22 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE.git'
-    targetRevision: add_ingress
+    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     path: jenkins/helm/jenkins
-    helm:
-      parameters:
-      - name: serviceAccountAgent.create
-        value: "true"
-      - name: agent.namespace
-        value: "jenkins"
+    targetRevision: add_ingress
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: jenkins
-    createNamespace: true
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
