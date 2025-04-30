@@ -108,20 +108,19 @@ controller:
   healthProbes: true
   probes:
     startupProbe:
-      failureThreshold: 12
       httpGet:
-        path: '{{ default "" .Values.controller.jenkinsUriPrefix }}/login'
-        port: http
+        path: "/login"
+        port: 8080
+      failureThreshold: 12
       periodSeconds: 10
       timeoutSeconds: 5
-      livenessProbe:
-        httpGet:
-          path: "/login"
-          port: 8080
-        initialDelaySeconds: 90
-        periodSeconds: 10
-        timeoutSeconds: 5
-        failureThreshold: 5
+    livenessProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      initialDelaySeconds: 90
+      periodSeconds: 10
+      timeoutSeconds: 5
     readinessProbe:
       httpGet:
         path: "/login"
