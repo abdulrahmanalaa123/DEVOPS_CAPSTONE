@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "access_policies" {
   statement {
     effect = each.value.required_policy.Effect
     actions = each.value.required_policy.Actions
-    resources = each.value.required_policy.Resource
+    resources = each.value.required_policy.Resources
   }
 }
 resource "aws_iam_policy" "service_policies" {

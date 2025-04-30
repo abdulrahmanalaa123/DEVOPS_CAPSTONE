@@ -10,12 +10,12 @@ data "aws_iam_policy_document" "trust_policies" {
     condition {
       test = "StringEquals"
       variable = "${local.oidc_provider}:sub"
-      values = "system:serviceaccount:${each.value.namespace}:${each.key}" 
+      values = ["system:serviceaccount:${each.value.namespace}:${each.key}"] 
     }
     condition {
       test = "StringEquals"
       variable = "${local.oidc_provider}:aud"
-      values = "sts.amazonaws.com" 
+      values = ["sts.amazonaws.com" ]
     }
   }
 }

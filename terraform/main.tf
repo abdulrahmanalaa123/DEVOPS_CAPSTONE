@@ -46,6 +46,7 @@ module "ecr" {
 
 # the role's naming convention is named by eks_${service_name}
 # so when creating a service account make sure to add
+# The Amazon EKS Pod Identity Webhook on the cluster watches for Pods that use a service account with the following annotation:
 #   name: ${service_name}
 #   annotations:
 #    eks.amazonaws.com/role-arn: arn:aws:iam::[AWS account ID]:role/eks_${service_name}
@@ -71,7 +72,7 @@ module "eks_iam" {
           "kms:DescribeKey",
           "kms:Encrypt"
           ]
-        Resource = "*"
+        Resources = ["*"]
         } 
     }
   ]
