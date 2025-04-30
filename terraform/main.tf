@@ -51,3 +51,11 @@ resource "null_resource" "apply_argocd_root_application" {
     EOT
   }
 }
+
+
+
+module "argocd_image_updater" {
+  source       = "./modules/argocd-image-updater"
+  cluster_name = aws_eks_cluster.eks.name
+  namespace    = "argocd"
+}

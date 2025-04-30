@@ -1,0 +1,19 @@
+rbac:
+  enabled: true
+
+config:
+  registries:
+    - name: ECR
+      api_url: https://<your_ecr_registry_url>  
+      prefix: <your_ecr_registry_url>
+      ping: yes
+      insecure: no
+      credentials: ext:/scripts/auth.sh
+      credsexpire: 10h
+
+authScripts:
+  enabled: true
+  scripts:
+    auth.sh: |
+      #!/bin/bash
+      aws ecr get-authorization-token --region <your_region> --output text --query 'authorizationData[].authorizationToken' | base64 -d
