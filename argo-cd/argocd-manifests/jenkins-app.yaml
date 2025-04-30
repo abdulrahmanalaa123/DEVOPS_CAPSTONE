@@ -13,7 +13,6 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: jenkins
-    createNamespace: true
   syncPolicy:
     automated:
       prune: true
