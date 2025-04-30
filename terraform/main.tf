@@ -74,10 +74,30 @@ module "eks_iam" {
           ]
         Resources = ["*"]
         } 
+    },
+
+    {
+      service_name    = "argocd-image-updater",
+      namespace       = "argocd",
+      required_policy = {
+        Effect = "Allow",
+        Actions = [
+          "ecr:DescribeImages",
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchGetImage",
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ],
+        Resources = ["*"]
+      
+      }
     }
   ]
   
 }
+
+
+
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
@@ -98,7 +118,7 @@ resource "null_resource" "apply_argocd_root_application" {
 
 
 module "argocd_image_updater" {
-  source       = "./modules/argocd-image-updater"
-  cluster_name = aws_eks_cluster.eks.name
-  namespace    = "argocd"
+  source                = "./modules/argocd-image-updater"
+  namespace             = "argocd"
+  irsa_module_dependency = module.eks_iam
 }
