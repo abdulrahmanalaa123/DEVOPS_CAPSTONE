@@ -1,0 +1,94 @@
+# Custom values for the official Jenkins Helm chart
+# This configuration mimics the behavior of your original K8s manifests
+
+# Controller configurations
+controller:
+  image:
+    registry: "docker.io"
+    repository: "jenkins/jenkins"
+    tag: "lts"
+    pullPolicy: "Always"
+
+  # Resource limits and requests
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  # Jenkins deployment strategy
+  strategy:
+    type: Recreate
+
+  # Node selector to ensure Jenkins runs on the correct node
+  nodeSelector:
+    jenkins-node: "true"
+
+  # Health probes
+  probes:
+    livenessProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      initialDelaySeconds: 90
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 5
+    readinessProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+  # Add init container for mounting and setting permissions
+  initContainers:
+  - name: "init-mnt"
+    image: "busybox:latest"
+    command:
+    - sh
+    - -c
+    - |
+      mkdir -p /mnt && chmod 777 /mnt
+    volumeMounts:
+    - name: host-mnt
+      mountPath: /mnt
+  # Additional volumes
+  volumes:
+  - name: host-mnt
+    hostPath:
+      path: /mnt
+      type: DirectoryOrCreate
+  # Additional volume mounts
+  volumeMounts:
+  - name: host-mnt
+    mountPath: /mnt
+  # Service configurations
+  serviceType: LoadBalancer
+  servicePort: 80
+  targetPort: 8080
+  jenkinsUriPrefix: ""
+
+  # Configure Jenkins agent port
+  agentListenerPort: 50000
+
+# Persistence configuration
+persistence:
+  enabled: true
+  storageClass: "local-storage"
+  size: "3Gi"
+  accessMode: "ReadWriteOnce"
+
+# Service account configuration
+serviceAccount:
+  create: true
+  name: "jenkins-admin"
+
+# RBAC configuration
+rbac:
+  create: true
+  readSecrets: true
