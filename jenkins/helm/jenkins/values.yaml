@@ -202,14 +202,8 @@ controller:
     defaultConfig: true
     configMap:
     - jenkins-security-config
-    overwriteConfiguration: false
-    configUrls: []
-    configScripts: {}
-    security:
-      apiToken:
-        creationOfLegacyTokenEnabled: false
-        tokenGenerationOnCreationEnabled: false
-        usageStatisticsEnabled: true
+    overwriteConfiguration: true
+
     configMapAnnotations: {}
 
   sidecars:
