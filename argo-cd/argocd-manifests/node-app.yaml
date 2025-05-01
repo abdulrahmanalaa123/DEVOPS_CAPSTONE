@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nodejs-app
+  namespace: 
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: nodejs=129734005271.dkr.ecr.${region}.amazonaws.com/nodejs-app
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/update-strategy: semver
+    argocd-image-updater.argoproj.io/allow-tags: regexp:^v1\.2\.\d+$
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
+    targetRevision: feat/node-app
+    path: app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    

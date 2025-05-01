@@ -22,6 +22,7 @@ provider "helm" {
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   }
   
+  
 }
 
 module "network" {
@@ -44,9 +45,72 @@ module "ecr" {
   depends_on = [ data.aws_eks_cluster_auth.cluster ]
 }
 
+# the role's naming convention is named by eks_${service_name}
+# so when creating a service account make sure to add
+# The Amazon EKS Pod Identity Webhook on the cluster watches for Pods that use a service account with the following annotation:
+#   name: ${service_name}
+#   annotations:
+#    eks.amazonaws.com/role-arn: arn:aws:iam::[AWS account ID]:role/eks_${service_name}
+module "eks_iam" {
+  source = "./modules/eks_iam_role_issuer"
+  oidc_arn = module.eks.oidc_provider.arn
+  oidc_url = module.eks.oidc_provider.url
+  # https://www.awsiamactions.io/generator
+  service_accounts = [
+    {
+     service_name = "jenkins"
+     namespace = "jenkins"
+     required_policy = {
+        Effect = "Allow"
+        Actions = [    
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:BatchGetImage",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "kms:Decrypt",
+          "kms:DescribeKey",
+          "kms:Encrypt"
+          ]
+        Resources = ["*"]
+        } 
+    },
+
+    {
+      service_name    = "argocd-image-updater",
+      namespace       = "argocd",
+      required_policy = {
+        Effect = "Allow",
+        Actions = [
+          "ecr:DescribeImages",
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchGetImage",
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ],
+        Resources = ["*"]
+      
+      }
+    }
+  ]
+  
+}
+
+
+
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
+  irsa_module_dependency = module.eks_iam
+  aws_region = var.aws_region
+  private_node_group_name = module.eks.private_node_group_name
+
 }
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [
@@ -56,7 +120,8 @@ resource "null_resource" "apply_argocd_root_application" {
   provisioner "local-exec" {
     command = <<-EOT
       aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.aws_region}
-      kubectl apply -f ../argo-cd/argocd.yaml
+      kubectl apply -f ../argo-cd/argocd-manifests/argocd.yaml
     EOT
   }
 }
+

@@ -1,0 +1,758 @@
+nameOverride:
+
+fullnameOverride:
+
+namespaceOverride:
+
+clusterZone: "cluster.local"
+
+kubernetesURL: "https://kubernetes.default"
+
+credentialsId:
+
+renderHelmLabels: true
+
+controller:
+  componentName: "jenkins-controller"
+  image:
+    registry: "docker.io"
+    repository: "jenkins/jenkins"
+    tag: "lts"
+    pullPolicy: "Always"
+  imagePullSecretName:
+
+  lifecycle: {}
+  disableRememberMe: false
+
+  numExecutors: 0
+
+  executorMode: "NORMAL"
+
+  customJenkinsLabels: []
+
+  hostNetworking: false
+  admin:
+    username: "admin"
+    password:
+    userKey: jenkins-admin-user
+    passwordKey: jenkins-admin-password
+    createSecret: true
+
+    existingSecret: ""
+  jenkinsAdminEmail:
+  jenkinsHome: "/var/jenkins_home"
+  jenkinsRef: "/usr/share/jenkins/ref"
+
+  jenkinsWar: "/usr/share/jenkins/jenkins.war"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+  shareProcessNamespace: false
+  enableServiceLinks: false
+  initContainerResources:
+  initContainers:
+  - name: "init-mnt"
+    image: "busybox:latest"
+    command:
+    - sh
+    - -c
+    - |
+      mkdir -p /mnt && chmod 777 /mnt
+    volumeMounts:
+    - name: host-mnt
+      mountPath: /mnt
+
+  initContainerEnvFrom: []
+  initContainerEnv: []
+  containerEnvFrom: []
+
+  containerEnv: []
+  javaOpts:
+
+  jenkinsOpts:
+  jenkinsUrlProtocol:
+
+  jenkinsUrl:
+
+  jenkinsUriPrefix: ""
+
+  usePodSecurityContext: true
+
+  runAsUser: 1000
+
+  fsGroup: 1000
+
+  securityContextCapabilities: {}
+  podSecurityContextOverride: ~
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+  serviceType: LoadBalancer
+  clusterIp:
+  servicePort: 80
+  targetPort: 8080
+  nodePort:
+  serviceExternalTrafficPolicy:
+  publishNotReadyAddresses:
+  serviceAnnotations: {}
+  statefulSetLabels: {}
+  serviceLabels: {}
+  podLabels: {}
+  healthProbes: true
+  probes:
+    startupProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      failureThreshold: 12
+      periodSeconds: 10
+      timeoutSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      initialDelaySeconds: 90
+      periodSeconds: 10
+      timeoutSeconds: 5
+    readinessProbe:
+      httpGet:
+        path: "/login"
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+  podDisruptionBudget:
+    enabled: false
+    apiVersion: "policy/v1beta1"
+
+    annotations: {}
+    labels: {}
+    maxUnavailable: "0"
+  agentListenerEnabled: true
+  agentListenerPort: 50000
+  agentListenerHostPort:
+  agentListenerNodePort:
+
+  agentListenerExternalTrafficPolicy:
+  agentListenerLoadBalancerSourceRanges:
+  - 0.0.0.0/0
+  disabledAgentProtocols:
+  - JNLP-connect
+  - JNLP2-connect
+  csrf:
+    defaultCrumbIssuer:
+      enabled: true
+      proxyCompatability: true
+  agentListenerServiceType: "ClusterIP"
+
+  agentListenerServiceAnnotations: {}
+  agentListenerLoadBalancerIP:
+
+  legacyRemotingSecurityEnabled: false
+  loadBalancerSourceRanges:
+  - 0.0.0.0/0
+  loadBalancerIP:
+  jmxPort:
+
+  extraPorts: []
+  installPlugins:
+  - kubernetes:4324.vfec199a_33512
+  - workflow-aggregator:608.v67378e9d3db_1
+  - git:5.7.0
+  - configuration-as-code:1958.vddc0d369b_e16
+  installLatestPlugins: true
+
+  installLatestSpecifiedPlugins: false
+
+  additionalPlugins: []
+
+  initializeOnce: false
+
+  overwritePlugins: false
+
+  overwritePluginsFromImage: true
+
+  projectNamingStrategy: standard
+
+  enableRawHtmlMarkupFormatter: false
+
+  markupFormatter: plainText
+
+  scriptApproval: []
+
+  initScripts: {}
+  initConfigMap:
+  existingSecret:
+
+  additionalExistingSecrets: []
+
+  additionalSecrets: []
+  secretClaims: []
+
+  cloudName: "kubernetes"
+  JCasC:
+    defaultConfig: true
+
+    overwriteConfiguration: false
+    configUrls: []
+    configScripts: {}
+    security:
+      apiToken:
+        creationOfLegacyTokenEnabled: false
+        tokenGenerationOnCreationEnabled: false
+        usageStatisticsEnabled: true
+    securityRealm: |-
+      local:
+        allowsSignup: false
+        enableCaptcha: false
+        users:
+        - id: "${chart-admin-username}"
+          name: "Jenkins Admin"
+          password: "${chart-admin-password}"
+
+    authorizationStrategy: |-
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
+
+    configMapAnnotations: {}
+
+  sidecars:
+    configAutoReload:
+      enabled: true
+      image:
+        registry: docker.io
+        repository: kiwigrid/k8s-sidecar
+        tag: 1.30.3
+      imagePullPolicy: IfNotPresent
+      resources: {}
+      additionalVolumeMounts: []
+      logging:
+        configuration:
+          override: false
+          logLevel: INFO
+          formatter: JSON
+          logToConsole: true
+          logToFile: false
+          maxBytes: 1024
+          backupCount: 3
+
+      scheme: http
+      skipTlsVerify: false
+
+      reqRetryConnect: 10
+      sleepTime:
+
+      envFrom: []
+      env: {}
+      sshTcpPort: 1044
+      folder: "/var/jenkins_home/casc_configs"
+      containerSecurityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+
+    additionalSidecarContainers: []
+  schedulerName: ""
+
+  nodeSelector:
+    jenkins-node: "true"
+
+  tolerations: []
+  terminationGracePeriodSeconds: # -- Set the termination message path
+
+  terminationMessagePath: # -- Set the termination message policy
+
+  terminationMessagePolicy:
+
+  affinity: {}
+
+  priorityClassName:
+
+  podAnnotations: {}
+  statefulSetAnnotations: {}
+
+  updateStrategy: {}
+
+  topologySpreadConstraints: {}
+
+  ingress:
+    enabled: false
+
+    paths: []
+    # - backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+    # - backend:
+    #     serviceName: >-
+    #       {{ template "jenkins.fullname" . }}
+    #     # Don't use string here, use only integer value!
+    #     servicePort: 8080
+
+    # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
+    # For Kubernetes v1.19+, use 'networking.k8s.io/v1'
+    # -- Ingress API version
+    apiVersion: "extensions/v1beta1"
+    labels: {}
+    annotations: {}
+    path:
+
+    hostName: # -- Hostname to serve assets from
+
+    resourceRootUrl: # -- Ingress TLS configuration
+
+    tls: []
+  secondaryingress:
+    enabled: false
+    paths: []
+    apiVersion: "extensions/v1beta1"
+    labels: {}
+    annotations: {}
+
+    hostName:
+    tls:
+
+
+  backendconfig:
+    enabled: false
+    apiVersion: "extensions/v1beta1"
+    name:
+
+    labels: {}
+    annotations: {}
+    spec: {}
+
+  route:
+    enabled: false
+    labels: {}
+    annotations: {}
+    path:
+
+
+  hostAliases: []
+
+  prometheus:
+
+    enabled: false
+    serviceMonitorAdditionalLabels: {}
+    serviceMonitorNamespace: # -- How often prometheus should scrape metrics
+
+    scrapeInterval: 60s
+
+    scrapeEndpoint: /prometheus
+
+    alertingrules: []
+    alertingRulesAdditionalLabels: {}
+    prometheusRuleNamespace: ""
+
+    relabelings: []
+    metricRelabelings: []
+
+  googlePodMonitor:
+    enabled: false
+    scrapeInterval: 60s
+    scrapeEndpoint: /prometheus
+
+  testEnabled: true
+
+  httpsKeyStore:
+    enable: false
+    jenkinsHttpsJksSecretName: ""
+    jenkinsHttpsJksSecretKey: "jenkins-jks-file"
+    jenkinsHttpsJksPasswordSecretName: ""
+    jenkinsHttpsJksPasswordSecretKey: "https-jks-password"
+    disableSecretMount: false
+
+    httpPort: 8081
+    path: "/var/jenkins_keystore"
+    fileName: "keystore.jks"
+    password: "password"
+
+    jenkinsKeyStoreBase64Encoded:
+
+
+agent:
+  enabled: true
+  defaultsProviderTemplate: ""
+
+  useDefaultServiceAccount: true
+
+  serviceAccount:
+
+  jenkinsUrl:
+  jenkinsTunnel: # -- Disables the verification of the controller certificate on remote connection. This flag correspond to the "Disable https certificate check" flag in kubernetes plugin UI
+
+  skipTlsVerify: false
+  usageRestricted: false
+  kubernetesConnectTimeout: 5
+  kubernetesReadTimeout: 15
+  maxRequestsPerHostStr: "32"
+  retentionTimeout: 5
+  waitForPodSec: 600
+  namespace: # -- Custom Pod labels (an object with `label-key: label-value` pairs)
+
+  podLabels: {}
+  jnlpregistry:
+  image:
+    repository: "jenkins/inbound-agent"
+    tag: "3307.v632ed11b_3a_c7-2"
+  workingDir: "/home/jenkins/agent"
+  nodeUsageMode: "NORMAL"
+  customJenkinsLabels: []
+  imagePullSecretName:
+  componentName: "jenkins-agent"
+  websocket: false
+  directConnection: false
+  privileged: false
+  runAsUser:
+
+  runAsGroup:
+
+  hostNetworking: false
+  resources:
+    requests:
+      cpu: "512m"
+      memory: "512Mi"
+    limits:
+      cpu: "512m"
+      memory: "512Mi"
+  livenessProbe: {}
+
+  alwaysPullImage: false
+
+  restrictedPssSecurityContext: false
+  podRetention: "Never"
+  showRawYaml: true
+
+  volumes: []
+  # - type: ConfigMap
+  #   configMapName: myconfigmap
+  #   mountPath: /var/myapp/myconfigmap
+  # - type: EmptyDir
+  #   mountPath: /var/myapp/myemptydir
+  #   memory: false
+  # - type: EphemeralVolume
+  #   mountPath: /var/myapp/myephemeralvolume
+  #   accessModes: ReadWriteOnce
+  #   requestsSize: 10Gi
+  #   storageClassName: mystorageclass
+  # - type: HostPath
+  #   hostPath: /var/lib/containers
+  #   mountPath: /var/myapp/myhostpath
+  # - type: Nfs
+  #   mountPath: /var/myapp/mynfs
+  #   readOnly: false
+  #   serverAddress: "192.0.2.0"
+  #   serverPath: /var/lib/containers
+  # - type: PVC
+  #   claimName: mypvc
+  #   mountPath: /var/myapp/mypvc
+  #   readOnly: false
+  # - type: Secret
+  #   defaultMode: "600"
+  #   mountPath: /var/myapp/mysecret
+  #   secretName: mysecret
+  # Pod-wide environment, these vars are visible to any container in the agent pod
+
+  # You can define the workspaceVolume that you want to mount for this container
+  # Allowed types are: DynamicPVC, EmptyDir, EphemeralVolume, HostPath, Nfs, PVC
+  # Configure the attributes as they appear in the corresponding Java class for that type
+  # https://github.com/jenkinsci/kubernetes-plugin/tree/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/volumes/workspace
+  # -- Workspace volume (defaults to EmptyDir)
+  workspaceVolume: {}
+  ## DynamicPVC example
+  # - type: DynamicPVC
+  #   configMapName: myconfigmap
+  ## EmptyDir example
+  # - type: EmptyDir
+  #   memory: false
+  ## EphemeralVolume example
+  # - type: EphemeralVolume
+  #   accessModes: ReadWriteOnce
+  #   requestsSize: 10Gi
+  #   storageClassName: mystorageclass
+  ## HostPath example
+  # - type: HostPath
+  #   hostPath: /var/lib/containers
+  ## NFS example
+  # - type: Nfs
+  #   readOnly: false
+  #   serverAddress: "192.0.2.0"
+  #   serverPath: /var/lib/containers
+  ## PVC example
+  # - type: PVC
+  #   claimName: mypvc
+  #   readOnly: false
+
+  # Pod-wide environment, these vars are visible to any container in the agent pod
+  # -- Environment variables for the agent Pod
+  envVars: []
+  # - name: PATH
+  #   value: /usr/local/bin
+  # -- Mount a secret as environment variable
+  secretEnvVars: []
+  # - key: PATH
+  #   optional: false # default: false
+  #   secretKey: MY-K8S-PATH
+  #   secretName: my-k8s-secret
+
+  # -- Node labels for pod assignment
+  nodeSelector: {}
+  # Key Value selectors. Ex:
+  # nodeSelector
+  #   jenkins-agent: v1
+
+  # -- Command to execute when side container starts
+  command: # -- Arguments passed to command to execute
+
+  args: "${computer.jnlpmac} ${computer.name}"
+  # -- Side container name
+  sideContainerName: "jnlp"
+
+  # Doesn't allocate pseudo TTY by default
+  # -- Allocate pseudo tty to the side container
+  TTYEnabled: false
+  # -- Max number of agents to launch for a whole cluster.
+  containerCap: 10
+  # -- Max number of agents to launch for this type of agent
+  instanceCap: 2147483647
+  # -- Agent Pod base name
+  podName: "default"
+
+  # Enables garbage collection of orphan pods for this Kubernetes cloud. (beta)
+  garbageCollection:
+    # -- When enabled, Jenkins will periodically check for orphan pods that have not been touched for the given timeout period and delete them.
+    enabled: false
+    # -- Namespaces to look at for garbage collection, in addition to the default namespace defined for the cloud. One namespace per line.
+    namespaces: ""
+    # namespaces: |-
+    #   namespaceOne
+    #   namespaceTwo
+    # -- Timeout value for orphaned pods
+    timeout: 300
+
+  # -- Allows the Pod to remain active for reuse until the configured number of minutes has passed since the last step was executed on it
+  idleMinutes: 0
+
+  # The raw yaml of a Pod API Object, for example, this allows usage of toleration for agent pods.
+  # https://github.com/jenkinsci/kubernetes-plugin#using-yaml-to-define-pod-templates
+  # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  # -- The raw yaml of a Pod API Object to merge into the agent spec
+  yamlTemplate: ""
+  # yamlTemplate: |-
+  #   apiVersion: v1
+  #   kind: Pod
+  #   spec:
+  #     tolerations:
+  #     - key: "key"
+  #       operator: "Equal"
+  #       value: "value"
+
+  # -- Defines how the raw yaml field gets merged with yaml definitions from inherited pod templates. Possible values: "merge" or "override"
+  yamlMergeStrategy: "override"
+  # -- Controls whether the defined yaml merge strategy will be inherited if another defined pod template is configured to inherit from the current one
+  inheritYamlMergeStrategy: false
+  # -- Timeout in seconds for an agent to be online
+  connectTimeout: 100
+  # -- Annotations to apply to the pod
+  annotations: {}
+
+  # Containers specified here are added to all agents. Set key empty to remove container from additional agents.
+  # -- Add additional containers to the agents
+  additionalContainers: []
+  #  - sideContainerName: dind
+  #    image:
+  #      repository: docker
+  #      tag: dind
+  #    command: dockerd-entrypoint.sh
+  #    args: ""
+  #    privileged: true
+  #    resources:
+  #      requests:
+  #        cpu: 500m
+  #        memory: 1Gi
+  #      limits:
+  #        cpu: 1
+  #        memory: 2Gi
+
+  # Useful when configuring agents only with the podTemplates value, since the default podTemplate populated by values mentioned above will be excluded in the rendered template.
+  # -- Disable the default Jenkins Agent configuration
+  disableDefaultAgent: false
+
+  # Below is the implementation of custom pod templates for the default configured kubernetes cloud.
+  # Add a key under podTemplates for each pod template. Each key (prior to | character) is just a label, and can be any value.
+  # Keys are only used to give the pod template a meaningful name. The only restriction is they may only contain RFC 1123 \ DNS label
+  # characters: lowercase letters, numbers, and hyphens. Each pod template can contain multiple containers.
+  # For this pod templates configuration to be loaded, the following values must be set:
+  # controller.JCasC.defaultConfig: true
+  # Best reference is https://<jenkins_url>/configuration-as-code/reference#Cloud-kubernetes. The example below creates a python pod template.
+  # -- Configures extra pod templates for the default kubernetes cloud
+  podTemplates: {}
+  #  python: |
+  #    - name: python
+  #      label: jenkins-python
+  #      serviceAccount: jenkins
+  #      containers:
+  #        - name: python
+  #          image: python:3
+  #          command: "/bin/sh -c"
+  #          args: "cat"
+  #          ttyEnabled: true
+  #          privileged: true
+  #          resourceRequestCpu: "400m"
+  #          resourceRequestMemory: "512Mi"
+  #          resourceLimitCpu: "1"
+  #          resourceLimitMemory: "1024Mi"
+
+  # Inherits all values from `agent` so you only need to specify values which differ
+  # -- Configure additional
+additionalAgents: {}
+#  maven:
+#    podName: maven
+#    customJenkinsLabels: maven
+#    # An example of overriding the jnlp container
+#    # sideContainerName: jnlp
+#    image:
+#      repository: jenkins/jnlp-agent-maven
+#      tag: latest
+#  python:
+#    podName: python
+#    customJenkinsLabels: python
+#    sideContainerName: python
+#    image:
+#      repository: python
+#      tag: "3"
+#    command: "/bin/sh -c"
+#    args: "cat"
+#    TTYEnabled: true
+
+# Here you can add additional clouds
+# They inherit all values from the default cloud (including the main agent), so
+# you only need to specify values which differ. If you want to override
+# default additionalAgents with the additionalClouds.additionalAgents set
+# additionalAgentsOverride to `true`.
+additionalClouds: {}
+#  remote-cloud-1:
+#    kubernetesURL: https://api.remote-cloud.com
+#    additionalAgentsOverride: true
+#    additionalAgents:
+#      maven-2:
+#        podName: maven-2
+#        customJenkinsLabels: maven
+#        # An example of overriding the jnlp container
+#        # sideContainerName: jnlp
+#        image:
+#          repository: jenkins/jnlp-agent-maven
+#          tag: latest
+#        namespace: my-other-maven-namespace
+#  remote-cloud-2:
+#    kubernetesURL: https://api.remote-cloud.com
+
+persistence:
+  enabled: true
+  existingClaim: "jenkins-pv-claim" # Reference the PVC created in your template
+  storageClass: "local-storage" # Ensure this matches your StorageClass
+  annotations: {}
+  labels: {}
+  accessMode: "ReadWriteOnce"
+  size: "3Gi" # Ensure this matches the PVC size
+  subPath: ""
+  volumes:
+  - name: host-mnt
+    hostPath:
+      path: /mnt
+      type: DirectoryOrCreate
+  mounts:
+  - mountPath: /mnt
+    name: host-mnt
+
+networkPolicy:
+  enabled: false
+
+  # For Kubernetes v1.4, v1.5 and v1.6, use 'extensions/v1beta1'
+  # For Kubernetes v1.7, use 'networking.k8s.io/v1'
+  # -- NetworkPolicy ApiVersion
+  apiVersion: networking.k8s.io/v1
+  # You can allow agents to connect from both within the cluster (from within specific/all namespaces) AND/OR from a given external IP range
+  internalAgents:
+    # -- Allow internal agents (from the same cluster) to connect to controller. Agent pods will be filtered based on PodLabels
+    allowed: true
+    # -- A map of labels (keys/values) that agent pods must have to be able to connect to controller
+    podLabels: {}
+    # -- A map of labels (keys/values) that agents namespaces must have to be able to connect to controller
+    namespaceLabels: {} # project: myproject
+  externalAgents:
+    # -- The IP range from which external agents are allowed to connect to controller, i.e., 172.17.0.0/16
+    ipCIDR: # -- A list of IP sub-ranges to be excluded from the allowlisted IP range
+
+    except: [] # - 172.17.1.0/24
+
+## Install Default RBAC roles and bindings
+rbac:
+  # -- Whether RBAC resources are created
+  create: true
+  # -- Whether the Jenkins service account should be able to read Kubernetes secrets
+  readSecrets: true
+  # -- Whether the Jenkins service account should be able to use the OpenShift "nonroot" Security Context Constraints
+  useOpenShiftNonRootSCC: false
+
+serviceAccount:
+  # -- Configures if a ServiceAccount with this name should be created
+  create: true
+
+  # The name of the ServiceAccount is autogenerated by default
+  #  -- The name of the ServiceAccount to be used by access-controlled resources
+  name: "jenkins-admin"
+  # -- Configures annotations for the ServiceAccount
+  annotations: {}
+  # -- Configures extra labels for the ServiceAccount
+  extraLabels: {}
+  # -- Controller ServiceAccount image pull secret
+  imagePullSecretName: # -- Auto-mount ServiceAccount token
+
+  automountServiceAccountToken: true
+
+serviceAccountAgent:
+  # -- Configures if an agent ServiceAccount should be created
+  create: false
+
+  # If not set and create is true, a name is generated using the fullname template
+  # -- The name of the agent ServiceAccount to be used by access-controlled resources
+  name: # -- Configures annotations for the agent ServiceAccount
+
+  annotations: {}
+  # -- Configures extra labels for the agent ServiceAccount
+  extraLabels: {}
+  # -- Agent ServiceAccount image pull secret
+  imagePullSecretName: # -- Auto-mount ServiceAccount token
+
+  automountServiceAccountToken: true
+
+# -- Checks if any deprecated values are used
+checkDeprecation: true
+
+awsSecurityGroupPolicies:
+  enabled: false
+  policies:
+  - name: ""
+    securityGroupIds: []
+    podSelector: {}
+
+# Here you can configure unit tests values when executing the helm unittest in the CONTRIBUTING.md
+helmtest:
+  # A testing framework for bash
+  bats:
+    # Bash Automated Testing System (BATS)
+    image:
+      # -- Registry of the image used to test the framework
+      registry: "docker.io"
+      # -- Repository of the image used to test the framework
+      repository: "bats/bats"
+      # -- Tag of the image to test the framework
+      tag: "1.11.1"

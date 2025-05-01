@@ -4,7 +4,7 @@ variable "aws_region" {
 }
 variable "cred_profile"{
 	type = string
-	default = "admin2"
+	default = "default"
 }
 
 variable "vpc_cidr" {
