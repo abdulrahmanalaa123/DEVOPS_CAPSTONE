@@ -1,8 +1,5 @@
 pipeline {
-    agent {
-        label 'nodejs'
-    }
-
+    agent any
     environment {
         AWS_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = '129734005271'
