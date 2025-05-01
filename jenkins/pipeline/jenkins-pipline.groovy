@@ -1,35 +1,47 @@
-pipeline {
+ipeline {
     agent any
 
     environment {
-        ECR_REPO = 'your-ecr-name'
-        AWS_REGION = 'region'  
-        IMAGE_TAG = "${env.BUILD_ID}"
+        AWS_REGION = 'us-east-1'
+        AWS_ACCOUNT_ID = '129734005271'
+        ECR_REPO_NAME = 'az3_app_chart'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        REPOSITORY_URI = "${ECR_REGISTRY}/${ECR_REPO_NAME}"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git clone  'repo url'
+                git url: 'https://github.com/AbdElRhmanArafa/nodejs-app#', branch: 'main'
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Authenticate with ECR') {
             steps {
                 script {
-                    def appImage = docker.build("${ECR_REPO}:${IMAGE_TAG}")
-                    docker.withRegistry("https://${ECR_REPO}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials') {
-                        appImage.push()
-                    }
+                    sh """
+                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+                    """
                 }
             }
         }
 
-        stage('Run Terraform') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'terraform init'
-                    sh 'terraform apply -auto-approve'
+                    sh """
+                        docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
+                        docker tag $ECR_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+                    """
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                script {
+                    sh "docker push $REPOSITORY_URI:$IMAGE_TAG"
                 }
             }
         }

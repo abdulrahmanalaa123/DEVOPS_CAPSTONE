@@ -16,7 +16,7 @@ resource "helm_release" "argocd_image_updater" {
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argocd-image-updater"
   namespace        = "argocd"
-  create_namespace = false
+  create_namespace = true
   version          = "0.11.0"
   values = [templatefile("${path.module}/values/image-updater.yaml", {
     account_id = 129734005271,

@@ -65,6 +65,11 @@ module "eks_iam" {
         Actions = [    
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:BatchGetImage",
           "ecr:PutImage",
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
@@ -102,10 +107,9 @@ module "eks_iam" {
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
-  namespace = "argocd"
   irsa_module_dependency = module.eks_iam
   aws_region = var.aws_region
-    private_node_group_name = module.eks.private_node_group_name
+  private_node_group_name = module.eks.private_node_group_name
 
 }
 resource "null_resource" "apply_argocd_root_application" {

@@ -200,9 +200,26 @@ controller:
   cloudName: "kubernetes"
   JCasC:
     defaultConfig: true
-    configMap:
-    - jenkins-security-config
-    overwriteConfiguration: true
+    overwriteConfiguration: false
+    configUrls: []
+    configScripts: {}
+    security:
+      apiToken:
+        creationOfLegacyTokenEnabled: false
+        tokenGenerationOnCreationEnabled: false
+        usageStatisticsEnabled: true
+    securityRealm: |-
+      local:
+        allowsSignup: false
+        enableCaptcha: false
+        users:
+        - id: "${chart-admin-username}"
+          name: "admin"
+          password: "${chart-admin-password}"
+
+    authorizationStrategy: |-
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
 
     configMapAnnotations: {}
 
