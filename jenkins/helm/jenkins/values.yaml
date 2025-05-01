@@ -200,6 +200,7 @@ controller:
   cloudName: "kubernetes"
   JCasC:
     defaultConfig: true
+
     overwriteConfiguration: false
     configUrls: []
     configScripts: {}
@@ -214,7 +215,7 @@ controller:
         enableCaptcha: false
         users:
         - id: "${chart-admin-username}"
-          name: "admin"
+          name: "Jenkins Admin"
           password: "${chart-admin-password}"
 
     authorizationStrategy: |-
