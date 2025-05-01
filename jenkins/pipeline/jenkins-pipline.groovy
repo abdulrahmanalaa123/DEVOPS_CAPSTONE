@@ -18,12 +18,12 @@ pipeline {
              stage('Build Docker Image') {
             steps {
                 container('dockerizer') {
-                    sh """
+                    sh '''
                         docker build -t mybuild .
-                    """
+                    '''
                 }
             }
-        }
+             }
 
         stage('Authenticate with ECR') {
             steps {
