@@ -19,9 +19,13 @@ pipeline {
         stage('Authenticate with ECR') {
             steps {
                 script {
-                    sh """
-                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-                    """
+                    docker.image('amazon/aws-cli').inside('--name dockerizer') {
+                        sh """
+                            aws ecr get-login-password --region $AWS_REGION > /tmp/ecr-password
+                        """
+                        // Pass credentials back to host
+                        sh 'cat /tmp/ecr-password | docker login --username AWS --password-stdin $ECR_REGISTRY'
+                    }
                 }
             }
         }
@@ -29,10 +33,13 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh """
-                        docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
-                        docker tag $ECR_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
-                    """
+                    // Use Docker-in-Docker container
+                    docker.image('docker:dind').inside('--name dockerizer --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
+                        sh """
+                            docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
+                            docker tag $ECR_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+                        """
+                    }
                 }
             }
         }
@@ -40,7 +47,9 @@ pipeline {
         stage('Push to ECR') {
             steps {
                 script {
-                    sh "docker push $REPOSITORY_URI:$IMAGE_TAG"
+                    docker.image('docker:dind').inside('--name dockerizer --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
+                        sh "docker push $REPOSITORY_URI:$IMAGE_TAG"
+                    }
                 }
             }
         }
