@@ -2,7 +2,12 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nodejs-app
-  namespace: argocd
+  namespace: 
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: nodejs=${account_id}.dkr.ecr.${region}.amazonaws.com/nodejs-app
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/update-strategy: semver
+    argocd-image-updater.argoproj.io/allow-tags: regexp:^v1\.2\.\d+$
 spec:
   project: default
   source:

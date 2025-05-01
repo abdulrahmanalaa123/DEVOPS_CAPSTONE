@@ -4,8 +4,8 @@ rbac:
 config:
   registries:
     - name: ECR
-      api_url: https://<your_ecr_registry_url>  
-      prefix: <your_ecr_registry_url>
+      api_url: https://${account_id}.dkr.ecr.${region}.amazonaws.com
+      prefix: ${account_id}.dkr.ecr.${region}.amazonaws.com
       ping: yes
       insecure: no
       credentials: ext:/scripts/auth.sh
