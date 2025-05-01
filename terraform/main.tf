@@ -118,7 +118,7 @@ resource "null_resource" "apply_argocd_root_application" {
 
 
 module "argocd_image_updater" {
-  source                = "./modules/argocd-image-updater"
+  source                = "./modules/argocd_image_updater"
   namespace             = "argocd"
   irsa_module_dependency = module.eks_iam
 }
