@@ -29,12 +29,13 @@ module "network" {
   source = "./modules/network"
   vpc_cidr = var.vpc_cidr
 }
+
 module "eks" {
   source = "./modules/eks"
   cluster_name = var.cluster_name
   private_subnet_ids = module.network.private_subnet_ids
-
 }
+
 module "ecr" {
   source = "./modules/ecr"
   region = var.aws_region
@@ -102,8 +103,6 @@ module "eks_iam" {
   
 }
 
-
-
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
@@ -112,11 +111,11 @@ module "helm" {
   private_node_group_name = module.eks.private_node_group_name
 
 }
+
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [
     module.helm.argocd
   ]
-
   provisioner "local-exec" {
     command = <<-EOT
       aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.aws_region}
