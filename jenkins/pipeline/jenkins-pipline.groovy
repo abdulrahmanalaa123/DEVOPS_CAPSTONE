@@ -1,47 +1,91 @@
 pipeline {
-    agent any
+    agent {
+        label 'jenkins_slave'
+    }
+
     environment {
-        AWS_REGION = 'us-east-1'
-        AWS_ACCOUNT_ID = '129734005271'
+        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION    = 'us-east-1'
+        DOCKER_IMAGE_TAG      = 'latest'
         ECR_REPO_NAME = 'az3_app_chart'
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        REPOSITORY_URI = "${ECR_REGISTRY}/${ECR_REPO_NAME}"
+
+    }
+
+    options {
+        skipDefaultCheckout(false)
+        timeout(time: 30, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 git url: 'https://github.com/AbdElRhmanArafa/nodejs-app.git', branch: 'main'
             }
         }
-             stage('Build Docker Image') {
-            steps {
-                container('dockerizer') {
-                    sh '''
-                        docker build -t mybuild .
-                    '''
-                }
-            }
-             }
 
-        stage('Authenticate with ECR') {
+        stage('Verify Tools') {
             steps {
-                container('dockerizer') {
-                    sh """
-                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-                    """
+                container('dockerimage'){
+                    sh '''
+                        echo "=== Versions ==="
+                        docker --version
+                        aws --version
+                    '''
                 }
             }
         }
 
-   
-        stage('Push to ECR') {
+        stage('AWS Configure') {
             steps {
-                container('dockerizer') {
-                    sh """
-                        docker push $REPOSITORY_URI:$IMAGE_TAG
-                    """
+                container('dockerimage'){
+                sh '''
+                    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+                    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+                    aws configure set region $AWS_DEFAULT_REGION
+                    aws sts get-caller-identity
+                '''
+            }
+            }
+        }
+
+        stage('Get ECR Info') {
+            steps {
+                container('dockerimage'){
+                    script {
+                        env.REGISTRY = sh(
+                            script: 'aws ecr describe-repositories --query "repositories[0].repositoryUri" --output text | cut -d "/" -f1',
+                            returnStdout: true
+                        ).trim()
+
+                        env.REPOSITORY = sh(
+                            script: 'aws ecr describe-repositories --query "repositories[0].repositoryName" --output text',
+                            returnStdout: true
+                        ).trim()
+
+                        echo "REGISTRY=${env.REGISTRY}"
+                        echo "REPOSITORY=${env.REPOSITORY}"
+                    }
+            }   }
+        }
+
+        stage('Build & Push Docker Image') {
+            steps {
+                container('dockerimage'){
+                    dir('nodeapp') {
+                        script {
+                            sh """
+                                aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | \
+                                docker login --username AWS --password-stdin ${env.REGISTRY}
+                            """
+
+                            sh """
+                                docker build -t ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG} .
+                                docker push ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG}
+                            """
+                        }
+                    }
                 }
             }
         }
