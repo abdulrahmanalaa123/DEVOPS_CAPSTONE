@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-security-config
+  namespace: jenkins
+data:
+  security-config.yaml: |-
+    jenkins:
+      securityRealm:
+        local:
+          allowsSignup: false
+          users:
+            - id: "arafa"
+              password: "admin"
+      authorizationStrategy:
+        loggedInUsersCanDoAnything:
+          allowAnonymousRead: false

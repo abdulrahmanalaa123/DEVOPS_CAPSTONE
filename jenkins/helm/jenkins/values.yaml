@@ -202,6 +202,7 @@ controller:
     defaultConfig: true
     configMap:
     - jenkins-nodejs-pod-template
+    - jenkins-security-config
     overwriteConfiguration: false
     configUrls: []
     configScripts: {}

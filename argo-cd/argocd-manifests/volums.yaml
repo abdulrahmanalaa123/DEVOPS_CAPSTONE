@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
+    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     targetRevision: feat/node-app
     path: jenkins/manifests
   destination:
