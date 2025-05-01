@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'nodejs'
+    }
 
     environment {
         AWS_REGION = 'us-east-1'
