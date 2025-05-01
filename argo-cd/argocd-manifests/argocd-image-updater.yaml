@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE.git
-    targetRevision: jenkins
+    targetRevision: feat/node-app
     path: argocd-image-updater
   destination:
     server: https://kubernetes.default.svc
