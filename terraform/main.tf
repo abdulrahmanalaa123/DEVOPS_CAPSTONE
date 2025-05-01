@@ -22,6 +22,7 @@ provider "helm" {
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   }
   
+  
 }
 
 module "network" {
@@ -104,6 +105,8 @@ module "helm" {
   namespace = "argocd"
   irsa_module_dependency = module.eks_iam
   aws_region = var.aws_region
+    private_node_group_name = module.eks.private_node_group_name
+
 }
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [

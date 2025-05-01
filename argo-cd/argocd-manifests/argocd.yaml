@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     path: argo-cd/argocd-manifests
-    targetRevision: jenkins
+    targetRevision: feat/node-app
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd

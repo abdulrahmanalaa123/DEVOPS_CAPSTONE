@@ -18,3 +18,6 @@ output "worker_role" {
 output "oidc_provider" {
   value = aws_iam_openid_connect_provider.eks_oidc
 }
+output "private_node_group_name" {
+  value = aws_eks_node_group.private-node.node_group_name
+}

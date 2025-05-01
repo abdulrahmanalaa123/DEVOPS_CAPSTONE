@@ -1,3 +1,4 @@
+
 resource "helm_release" "argocd" {
   name = "argocd"
 
@@ -7,15 +8,14 @@ resource "helm_release" "argocd" {
   create_namespace = true
   version          = "3.35.4"
 
-  values     = [file("${path.module}/values/argocd.yaml")]
-  depends_on = [var.cluster_name]
+  values = [file("${path.module}/values/argocd.yaml")]
+  depends_on = [var.private_node_group_name]
 }
-
 resource "helm_release" "argocd_image_updater" {
   name             = "argocd-image-updater"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argocd-image-updater"
-  namespace        = var.namespace
+  namespace        = "argocd"
   create_namespace = false
   version          = "0.11.0"
   values = [templatefile("${path.module}/values/image-updater.yaml", {

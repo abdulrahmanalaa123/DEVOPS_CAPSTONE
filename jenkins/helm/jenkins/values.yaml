@@ -203,7 +203,28 @@ controller:
 
     overwriteConfiguration: false
     configUrls: []
-    configScripts: {}
+    configScripts:
+      pod-templates: |
+        jenkins:
+          clouds:
+            - kubernetes:
+                name: "kubernetes"
+                templates:
+                  - name: "nodejs"
+                    label: "nodejs"
+                    nodeUsageMode: NORMAL
+                    containers:
+                      - name: "nodejs"
+                        image: "node:16-alpine"
+                        command: "cat"
+                        args: ""
+                        ttyEnabled: true
+                        workingDir: "/home/jenkins/agent"
+                        resourceRequestCpu: "500m"
+                        resourceRequestMemory: "512Mi"
+                        resourceLimitCpu: "1000m"
+                        resourceLimitMemory: "1Gi
+      
     security:
       apiToken:
         creationOfLegacyTokenEnabled: false
@@ -223,6 +244,7 @@ controller:
         allowAnonymousRead: false
 
     configMapAnnotations: {}
+
 
   sidecars:
     configAutoReload:

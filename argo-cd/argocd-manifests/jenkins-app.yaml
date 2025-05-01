@@ -9,7 +9,7 @@ spec:
     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     path: jenkins/helm/jenkins
     targetRevision: feat/node-app
-    helm:
+  helm:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: jenkins
