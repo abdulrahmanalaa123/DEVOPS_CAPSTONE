@@ -7,22 +7,21 @@ resource "helm_release" "argocd" {
   create_namespace = true
   version          = "3.35.4"
 
-  values     = [file("../argo-cd/values.yaml")]
+  values     = [file("${path.module}/values/argocd.yaml")]
   depends_on = [var.cluster_name]
 }
 
-resource "helm_release" "jenkins" {
-  name       = "jenkins"
-  repository = "https://charts.jenkins.io"
-  chart      = "jenkins"
-  namespace  = "jenkins"
-  create_namespace = true
-  version    = "5.8.37"  # You can adjust the version depending on your needs
-  wait             = true
-  values = [
-    file("modules/helm/jenkins-values.yaml")
+resource "helm_release" "argocd_image_updater" {
+  name             = "argocd-image-updater"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argocd-image-updater"
+  namespace        = var.namespace
+  create_namespace = false
+  version          = "0.11.0"
+  values = [templatefile("${path.module}/values/image-updater.yaml", {
+    account_id = 129734005271,
+    region     = var.aws_region
+  })]
 
-  ]
+  depends_on = [var.irsa_module_dependency]
 }
-
-

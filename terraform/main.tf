@@ -101,6 +101,9 @@ module "eks_iam" {
 module "helm" {
   source = "./modules/helm"
   cluster_name = module.eks.cluster_name
+  namespace = "argocd"
+  irsa_module_dependency = module.eks_iam
+  aws_region = var.aws_region
 }
 resource "null_resource" "apply_argocd_root_application" {
   depends_on = [
@@ -115,10 +118,3 @@ resource "null_resource" "apply_argocd_root_application" {
   }
 }
 
-
-
-module "argocd_image_updater" {
-  source                = "./modules/argocd_image_updater"
-  namespace             = "argocd"
-  irsa_module_dependency = module.eks_iam
-}

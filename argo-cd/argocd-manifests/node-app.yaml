@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
-    targetRevision: main
+    targetRevision: feat/node-app
     path: app
   destination:
     server: https://kubernetes.default.svc

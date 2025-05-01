@@ -1,21 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: jenkins
+  name: jenkins-volumes
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
-    path: jenkins/helm/jenkins
+    repoURL: https://github.com/abdulrahmanalaa123/DEVOPS_CAPSTONE'
     targetRevision: feat/node-app
-    helm:
+    path: jenkins/manifests
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: https://kubernetes.default.svc
     namespace: jenkins
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
