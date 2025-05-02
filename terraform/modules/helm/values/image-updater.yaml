@@ -4,8 +4,8 @@ rbac:
 config:
   registries:
     - name: ECR
-      api_url: https://129734005271.dkr.ecr.${region}.amazonaws.com
-      prefix: 129734005271.dkr.ecr.${region}.amazonaws.com
+      api_url: https://129734005271.dkr.ecr.us-east-1.amazonaws.com
+      prefix: 129734005271.dkr.ecr.us-east-1.amazonaws.com
       ping: yes
       insecure: no
       credentials: ext:/scripts/auth.sh
@@ -16,4 +16,4 @@ authScripts:
   scripts:
     auth.sh: |
       #!/bin/bash
-      aws ecr get-authorization-token --region ${region} --output text --query 'authorizationData[].authorizationToken' | base64 -d
+      aws ecr get-authorization-token --region us-east-1 --output text --query 'authorizationData[].authorizationToken' | base64 -d
