@@ -224,11 +224,10 @@ securityContext:
   capabilities:
     drop:
     - ALL
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false  # Changed from true to false
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
-
 rbac:
   # -- Enable RBAC creation
   enabled: true
