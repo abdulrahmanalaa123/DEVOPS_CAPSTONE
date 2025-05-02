@@ -71,6 +71,7 @@ F --> G[Tag Update Pushed to GitHub]
 G --> H[ArgoCD Syncs Manifests]
 H --> I[App Deployed on EKS]
 
+![Project flow](https://github.com/user-attachments/assets/296b9e54-7eee-46e5-990d-e19e6d637a1a)
 
 - CI: Jenkins handles cloning, building, and pushing to ECR + infra updates
 - CD: ArgoCD watches Git → deploys changes
