@@ -101,7 +101,8 @@ controller:
   nodePort:
   serviceExternalTrafficPolicy:
   publishNotReadyAddresses:
-  serviceAnnotations: {}
+  serviceAnnotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
   statefulSetLabels: {}
   serviceLabels: {}
   podLabels: {}
