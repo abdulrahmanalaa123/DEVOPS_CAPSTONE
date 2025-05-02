@@ -30,12 +30,16 @@ pipeline {
             '''
         }
     }
+    
+    parameters {
+        string(name: 'Release', defaultValue: '1.0.0', description: 'The tag for the Docker image')
+    }
         
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION    = 'us-east-1'
-        DOCKER_IMAGE_TAG      = params.Release
+        DOCKER_IMAGE_TAG      = "${params.Release}"
         ECR_REPO_NAME        = 'az3_app'
         DOCKER_HOST          = 'tcp://localhost:2375'
     }
