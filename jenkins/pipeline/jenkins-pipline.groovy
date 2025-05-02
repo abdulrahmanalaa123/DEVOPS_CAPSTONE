@@ -1,6 +1,34 @@
 pipeline {
     agent {
-        label 'jenkins_slave'
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  labels:
+                    jenkins: slave
+                spec:
+                  containers:
+                  - name: docker
+                    image: docker:dind
+                    securityContext:
+                      privileged: true
+                    tty: true
+                    command:
+                    - dockerd
+                    - --host=unix:///var/run/docker.sock
+                    - --host=tcp://0.0.0.0:2375
+                    - --tls=false
+                  - name: aws
+                    image: amazon/aws-cli:latest
+                    command:
+                    - cat
+                    tty: true
+                  volumes:
+                  - name: docker-sock
+                    emptyDir: {}
+            '''
+        }
     }
 
     environment {
@@ -8,8 +36,8 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION    = 'us-east-1'
         DOCKER_IMAGE_TAG      = 'latest'
-        ECR_REPO_NAME = 'az3_app_chart'
-
+        ECR_REPO_NAME        = 'az3_app'
+        DOCKER_HOST          = 'tcp://localhost:2375'
     }
 
     options {
@@ -27,32 +55,35 @@ pipeline {
 
         stage('Verify Tools') {
             steps {
-                container('dockerimage'){
+                container('docker') {
                     sh '''
-                        echo "=== Versions ==="
+                        sleep 20 # Wait for Docker daemon to start
                         docker --version
-                        aws --version
+                        docker info
                     '''
+                }
+                container('aws') {
+                    sh 'aws --version'
                 }
             }
         }
 
         stage('AWS Configure') {
             steps {
-                container('dockerimage'){
-                sh '''
-                    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-                    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-                    aws configure set region $AWS_DEFAULT_REGION
-                    aws sts get-caller-identity
-                '''
-            }
+                container('aws') {
+                    sh '''
+                        aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+                        aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+                        aws configure set region $AWS_DEFAULT_REGION
+                        aws sts get-caller-identity
+                    '''
+                }
             }
         }
 
         stage('Get ECR Info') {
             steps {
-                container('dockerimage'){
+                container('aws') {
                     script {
                         env.REGISTRY = sh(
                             script: 'aws ecr describe-repositories --query "repositories[0].repositoryUri" --output text | cut -d "/" -f1',
@@ -66,20 +97,26 @@ pipeline {
 
                         echo "REGISTRY=${env.REGISTRY}"
                         echo "REPOSITORY=${env.REPOSITORY}"
+
+                        // Get ECR login password and store it
+                        env.ECR_PASSWORD = sh(
+                            script: "aws ecr get-login-password --region ${AWS_DEFAULT_REGION}",
+                            returnStdout: true
+                        ).trim()
                     }
-            }   }
+                }
+            }
         }
 
         stage('Build & Push Docker Image') {
             steps {
-                container('dockerimage'){
+                container('docker') {
                     dir('nodeapp') {
                         script {
-                            sh """
-                                aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | \
-                                docker login --username AWS --password-stdin ${env.REGISTRY}
+                            sh """  
+                                ls -l 
+                                echo '${env.ECR_PASSWORD}' | docker login --username AWS --password-stdin ${env.REGISTRY}
                             """
-
                             sh """
                                 docker build -t ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG} .
                                 docker push ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG}
