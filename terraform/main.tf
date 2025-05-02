@@ -88,11 +88,8 @@ module "eks_iam" {
       required_policy = {
         Effect = "Allow",
         Actions = [
-          "ecr:DescribeImages",
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchGetImage",
-          "kms:Decrypt",
-          "kms:DescribeKey"
+          "ecr:*",
+          "kms:*"
         ],
         Resources = ["*"]
       
