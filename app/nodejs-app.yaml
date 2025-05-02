@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: node
-          image: 129734005271.dkr.ecr.${region}.amazonaws.com/az3_app:latest
+          image: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app:latest
           env:
             - name: MYSQL_HOST
               value: mysql
