@@ -85,7 +85,19 @@ pipeline {
             steps {
                 container('aws') {
                     script {
-
+                        // Get AWS account ID for the ECR registry URL
+                        env.AWS_ACCOUNT_ID = sh(
+                            script: 'aws sts get-caller-identity --query "Account" --output text',
+                            returnStdout: true
+                        ).trim()
+                        
+                        // Use ECR_REPO_NAME variable directly
+                        env.REGISTRY = "${env.AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                        env.REPOSITORY = "${ECR_REPO_NAME}"
+                        
+                        echo "REGISTRY=${env.REGISTRY}"
+                        echo "REPOSITORY=${env.REPOSITORY}"
+                        
                         // Get ECR login password and store it
                         env.ECR_PASSWORD = sh(
                             script: "aws ecr get-login-password --region ${AWS_DEFAULT_REGION}",
