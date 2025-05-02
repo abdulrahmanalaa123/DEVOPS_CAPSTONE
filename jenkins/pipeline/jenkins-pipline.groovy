@@ -85,18 +85,6 @@ pipeline {
             steps {
                 container('aws') {
                     script {
-                        env.REGISTRY = sh(
-                            script: 'aws ecr describe-repositories --query "repositories[0].repositoryUri" --output text | cut -d "/" -f1',
-                            returnStdout: true
-                        ).trim()
-
-                        env.REPOSITORY = sh(
-                            script: 'aws ecr describe-repositories --query "repositories[0].repositoryName" --output text',
-                            returnStdout: true
-                        ).trim()
-
-                        echo "REGISTRY=${env.REGISTRY}"
-                        echo "REPOSITORY=${env.REPOSITORY}"
 
                         // Get ECR login password and store it
                         env.ECR_PASSWORD = sh(

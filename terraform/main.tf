@@ -58,7 +58,7 @@ module "eks_iam" {
   # https://www.awsiamactions.io/generator
   service_accounts = [
     {
-     service_name = "jenkins"
+     service_name = "jenkins-admin"
      namespace = "jenkins"
      required_policy = {
         Effect = "Allow"
