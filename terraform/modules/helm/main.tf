@@ -1,4 +1,3 @@
-
 resource "helm_release" "argocd" {
   name = "argocd"
 
@@ -11,6 +10,7 @@ resource "helm_release" "argocd" {
   values = [file("${path.module}/values/argocd.yaml")]
   depends_on = [var.private_node_group_name]
 }
+
 resource "helm_release" "argocd_image_updater" {
   name             = "argocd-image-updater"
   repository       = "https://argoproj.github.io/argo-helm"
@@ -24,4 +24,29 @@ resource "helm_release" "argocd_image_updater" {
   })]
 
   depends_on = [var.irsa_module_dependency]
+}
+
+resource "helm_release" "aws_load_balancer_controller" {
+  name             = "aws-load-balancer-controller"
+  repository       = "https://aws.github.io/eks-charts"
+  chart            = "aws-load-balancer-controller"
+  namespace        = "kube-system"
+  create_namespace = true
+  version          = "1.4.7" 
+  set {
+    name  = "clusterName"
+    value = var.cluster_name
+  }
+
+  set {
+    name  = "serviceAccount.create"
+    value = "false"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
+
+  depends_on = [var.private_node_group_name]
 }
