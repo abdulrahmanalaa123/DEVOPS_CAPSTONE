@@ -163,7 +163,7 @@ config:
     prefix: 129734005271.dkr.ecr.us-east-1.amazonaws.com
     ping: yes
     insecure: false
-    credentials: awsecr
+    credentials: ext:/scripts/auth.sh
     credsexpire: 10h
 
   sshConfig:
