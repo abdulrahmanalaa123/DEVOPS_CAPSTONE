@@ -61,3 +61,4 @@ resource "null_resource" "apply_argocd_root_application" {
 
 ## Exepected Architecture after initialization
 
+![architecture](https://github.com/user-attachments/assets/3e7cdce6-b750-4045-9be0-9611edc06033)
