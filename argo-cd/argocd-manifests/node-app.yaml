@@ -3,13 +3,6 @@ kind: Application
 metadata:
   name: nodejs-app
   namespace: argocd
-  annotations:
-    argocd-image-updater.argoproj.io/image-list: nodejs=129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app
-    argocd-image-updater.argoproj.io/nodejs.update-strategy: digest
-    argocd-image-updater.argoproj.io/nodejs.pull-secret: pull-secret:argocd/argocd-ecr-secret
-    argocd-image-updater.argoproj.io/write-back-method: git
-    argocd-image-updater.argoproj.io/git-branch: feat/node-app
-    argocd-image-updater.argoproj.io/nodejs.force-update: "true"
 spec:
   project: default
   source:
