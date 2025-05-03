@@ -721,7 +721,7 @@ serviceAccount:
 
 serviceAccountAgent:
   # -- Configures if an agent ServiceAccount should be created
-  create: true
+  create: false
 
   # If not set and create is true, a name is generated using the fullname template
   # -- The name of the agent ServiceAccount to be used by access-controlled resources
