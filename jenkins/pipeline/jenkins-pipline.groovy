@@ -8,8 +8,9 @@ pipeline {
                   labels:
                     jenkins: slave
                   namespace: jenkins
-                serviceAccountName: jenkins-admin
+
                 spec:
+                  serviceAccountName: jenkins-admin
                   containers:
                   - name: docker
                     image: docker:dind
