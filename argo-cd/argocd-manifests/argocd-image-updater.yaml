@@ -7,7 +7,7 @@ metadata:
     argocd-image-updater.argoproj.io/nodejs.update-strategy: digest
     argocd-image-updater.argoproj.io/nodejs.pull-secret: pullsecret:argocd/argocd-ecr-secret
     argocd-image-updater.argoproj.io/nodejs.allow-tags: "regexp:^v[0-9]+\\.[0-9]+\\.[0-9]+$"
-    argocd-image-updater.argoproj.io/nodejs: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app
+    argocd-image-updater.argoproj.io/nodejs: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app:1.0.0c
 spec:
   destination:
     namespace: argocd

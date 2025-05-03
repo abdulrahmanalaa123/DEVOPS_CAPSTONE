@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app:1.0.0
+        image: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app:2.0.0
         env:
         - name: MYSQL_HOST
           value: mysql
@@ -26,6 +26,13 @@ spec:
               key: mysql-password
         - name: REDIS_HOST
           value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: redis-password
         ports:
         - containerPort: 3000
 ---

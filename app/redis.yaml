@@ -7,15 +7,14 @@ spec:
   selector:
     app: redis
   ports:
-    - port: 6379
-
+  - port: 6379
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
   namespace: default
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -26,5 +25,12 @@ spec:
         app: redis
     spec:
       containers:
-        - name: redis
-          image: redis:alpine
+      - name: redis
+        image: redis:alpine
+        args: [ "--requirepass", "$(REDIS_PASSWORD)" ]
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: redis-password
