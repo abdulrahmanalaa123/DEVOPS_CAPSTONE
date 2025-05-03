@@ -7,6 +7,8 @@ pipeline {
                 metadata:
                   labels:
                     jenkins: slave
+                  namespace: jenkins
+                serviceAccountName: jenkins-admin
                 spec:
                   containers:
                   - name: docker
@@ -36,8 +38,8 @@ pipeline {
     }
         
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        // AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        // AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION    = 'us-east-1'
         DOCKER_IMAGE_TAG      = "${params.Release}"
         ECR_REPO_NAME        = 'az3_app'
@@ -75,9 +77,9 @@ pipeline {
         stage('AWS Configure') {
             steps {
                 container('aws') {
+                    // aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+                    // aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
                     sh '''
-                        aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-                        aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
                         aws configure set region $AWS_DEFAULT_REGION
                         aws sts get-caller-identity
                     '''
