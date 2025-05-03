@@ -59,7 +59,7 @@ module "eks_iam" {
   # https://www.awsiamactions.io/generator
   service_accounts = [
     {
-     service_name = "jenkins"
+     service_name = "jenkins-admin"
      namespace = "jenkins"
      required_policy = {
         Effect = "Allow"
@@ -89,14 +89,62 @@ module "eks_iam" {
       required_policy = {
         Effect = "Allow",
         Actions = [
-          "ecr:DescribeImages",
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchGetImage",
-          "kms:Decrypt",
-          "kms:DescribeKey"
+          "ecr:*",
+          "kms:*"
         ],
         Resources = ["*"]
       
+      }
+    },
+    {
+      service_name = "aws-load-balancer-controller",
+      namespace = "kube-system",
+      required_policy = {
+        Effect = "Allow",
+        Actions = [
+          "acm:DescribeCertificate",
+          "acm:ListCertificates",
+          "acm:ListTagsForCertificate",
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "elasticloadbalancing:AddListenerCertificates",
+          "elasticloadbalancing:AddTags",
+          "elasticloadbalancing:CreateListener",
+          "elasticloadbalancing:CreateLoadBalancer",
+          "elasticloadbalancing:CreateRule",
+          "elasticloadbalancing:CreateTargetGroup",
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:DeleteRule",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:DescribeListenerCertificates",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeLoadBalancerPolicies",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeSSLPolicies",
+          "elasticloadbalancing:DescribeTags",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "elasticloadbalancing:GetLoadBalancerPolicyConfiguration",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:RemoveListenerCertificates",
+          "elasticloadbalancing:RemoveTags",
+          "elasticloadbalancing:SetIpAddressType ",
+          "elasticloadbalancing:SetLoadBalancerAccessLogsStatus ",
+          "elasticloadbalancing:SetLoadBalancerListenerSSLCertificate ",
+          "elasticloadbalancing:SetLoadBalancerPoliciesForBackendServer ",
+          "elasticloadbalancing:SetLoadBalancerPoliciesOfListener ",
+        ],
+        Resources = ["*"]
       }
     }
   ]

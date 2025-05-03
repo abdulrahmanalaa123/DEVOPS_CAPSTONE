@@ -1,47 +1,135 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  labels:
+                    jenkins: slave
+                  namespace: jenkins
 
+                spec:
+                  serviceAccountName: jenkins-admin
+                  containers:
+                  - name: docker
+                    image: docker:dind
+                    securityContext:
+                      privileged: true
+                    tty: true
+                    command:
+                    - dockerd
+                    - --host=unix:///var/run/docker.sock
+                    - --host=tcp://0.0.0.0:2375
+                    - --tls=false
+                  - name: aws
+                    image: amazon/aws-cli:latest
+                    command:
+                    - cat
+                    tty: true
+                  volumes:
+                  - name: docker-sock
+                    emptyDir: {}
+            '''
+        }
+    }
+    
+    parameters {
+        string(name: 'Release', defaultValue: '1.0.0', description: 'The tag for the Docker image')
+    }
+        
     environment {
-        AWS_REGION = 'us-east-1'
-        AWS_ACCOUNT_ID = '129734005271'
-        ECR_REPO_NAME = 'az3_app_chart'
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        REPOSITORY_URI = "${ECR_REGISTRY}/${ECR_REPO_NAME}"
+        // AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        // AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION    = 'us-east-1'
+        DOCKER_IMAGE_TAG      = "${params.Release}"
+        ECR_REPO_NAME        = 'az3_app'
+        DOCKER_HOST          = 'tcp://localhost:2375'
+    }
+
+    options {
+        skipDefaultCheckout(false)
+        timeout(time: 30, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/AbdElRhmanArafa/nodejs-app#', branch: 'main'
+                git url: 'https://github.com/AbdElRhmanArafa/nodejs-app.git', branch: 'main'
             }
         }
 
-        stage('Authenticate with ECR') {
+        stage('Verify Tools') {
             steps {
-                script {
-                    sh """
-                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-                    """
+                container('docker') {
+                    sh '''
+                        sleep 20 # Wait for Docker daemon to start
+                        docker --version
+                        docker info
+                    '''
+                }
+                container('aws') {
+                    sh 'aws --version'
                 }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('AWS Configure') {
             steps {
-                script {
-                    sh """
-                        docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
-                        docker tag $ECR_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
-                    """
+                container('aws') {
+                    // aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+                    // aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+                    sh '''
+                        aws configure set region $AWS_DEFAULT_REGION
+                        aws sts get-caller-identity
+                    '''
                 }
             }
         }
 
-        stage('Push to ECR') {
+        stage('Get ECR Info') {
             steps {
-                script {
-                    sh "docker push $REPOSITORY_URI:$IMAGE_TAG"
+                container('aws') {
+                    script {
+                        // Get AWS account ID for the ECR registry URL
+                        env.AWS_ACCOUNT_ID = sh(
+                            script: 'aws sts get-caller-identity --query "Account" --output text',
+                            returnStdout: true
+                        ).trim()
+                        
+                        // Use ECR_REPO_NAME variable directly
+                        env.REGISTRY = "${env.AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                        env.REPOSITORY = "${ECR_REPO_NAME}"
+                        
+                        echo "REGISTRY=${env.REGISTRY}"
+                        echo "REPOSITORY=${env.REPOSITORY}"
+                        
+                        // Get ECR login password and store it
+                        env.ECR_PASSWORD = sh(
+                            script: "aws ecr get-login-password --region ${AWS_DEFAULT_REGION}",
+                            returnStdout: true
+                        ).trim()
+                    }
+                }
+            }
+        }
+
+        stage('Build & Push Docker Image') {
+            steps {
+                container('docker') {
+                    dir('nodeapp') {
+                        script {
+                            sh """  
+                                ls -l 
+                                echo '${env.ECR_PASSWORD}' | docker login --username AWS --password-stdin ${env.REGISTRY}
+                            """
+                            sh """
+                                docker build -t ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG} .
+                                docker push ${env.REGISTRY}/${env.REPOSITORY}:${DOCKER_IMAGE_TAG}
+                            """
+                        }
+                    }
                 }
             }
         }

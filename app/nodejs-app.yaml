@@ -14,20 +14,27 @@ spec:
         app: nodejs-app
     spec:
       containers:
-        - name: node
-          image: 129734005271.dkr.ecr.${region}.amazonaws.com/nodejs-app:latest
-          env:
-            - name: MYSQL_HOST
-              value: mysql
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: my-secret
-                  key: mysql-password
-            - name: REDIS_HOST
-              value: redis
-          ports:
-            - containerPort: 3000
+      - name: node
+        image: 129734005271.dkr.ecr.us-east-1.amazonaws.com/az3_app:2.0.0
+        env:
+        - name: MYSQL_HOST
+          value: mysql
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: mysql-password
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: redis-password
+        ports:
+        - containerPort: 3000
 ---
 apiVersion: v1
 kind: Service
@@ -38,6 +45,6 @@ spec:
   selector:
     app: nodejs-app
   ports:
-    - port: 80
-      targetPort: 3000
-  type: ClusterIP
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer

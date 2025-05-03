@@ -101,7 +101,8 @@ controller:
   nodePort:
   serviceExternalTrafficPolicy:
   publishNotReadyAddresses:
-  serviceAnnotations: {}
+  serviceAnnotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
   statefulSetLabels: {}
   serviceLabels: {}
   podLabels: {}
@@ -710,7 +711,7 @@ serviceAccount:
   #  -- The name of the ServiceAccount to be used by access-controlled resources
   name: "jenkins-admin"
   # -- Configures annotations for the ServiceAccount
-  annotations: {}
+  annotations: { "eks.amazonaws.com/role-arn": "arn:aws:iam::129734005271:role/eks_jenkins-admin" }
   # -- Configures extra labels for the ServiceAccount
   extraLabels: {}
   # -- Controller ServiceAccount image pull secret
@@ -724,9 +725,9 @@ serviceAccountAgent:
 
   # If not set and create is true, a name is generated using the fullname template
   # -- The name of the agent ServiceAccount to be used by access-controlled resources
-  name: # -- Configures annotations for the agent ServiceAccount
+  name: "jenkins-admin" # -- Configures annotations for the agent ServiceAccount
 
-  annotations: {}
+  annotations: { "eks.amazonaws.com/role-arn": "arn:aws:iam::129734005271:role/eks_jenkins-admin" }
   # -- Configures extra labels for the agent ServiceAccount
   extraLabels: {}
   # -- Agent ServiceAccount image pull secret

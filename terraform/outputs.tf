@@ -15,3 +15,7 @@ output "repos_links" {
 output "created_policies" {
   value = module.eks_iam.created_policies
 }
+
+output "registries_urls" {
+  value = module.ecr.registries_urls
+}
