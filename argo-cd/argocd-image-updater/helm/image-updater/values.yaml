@@ -200,8 +200,7 @@ serviceAccount:
   # -- Specifies whether a service account should be created
   create: true
   # -- Annotations to add to the service account
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::129734005271:role/eks_argocd-image-updater
+  annotations: { "eks.amazonaws.com/role-arn": "arn:aws:iam::129734005271:role/eks_argocd-image-updater" }
   # -- Labels to add to the service account
   labels: {}
   # -- The name of the service account to use.
@@ -209,7 +208,7 @@ serviceAccount:
   name: "argocd-image-updater"
 
 # -- Pod Annotations for the deployment
-podAnnotations: {}
+podAnnotations: { "eks.amazonaws.com/role-arn": "arn:aws:iam::129734005271:role/eks_argocd-image-updater" }
 
 # -- Pod Labels for the deployment
 podLabels: {}
@@ -224,7 +223,7 @@ securityContext:
   capabilities:
     drop:
     - ALL
-  readOnlyRootFilesystem: false  # Changed from true to false
+  readOnlyRootFilesystem: false # Changed from true to false
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
